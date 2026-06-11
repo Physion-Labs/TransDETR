@@ -1,0 +1,11 @@
+# Build configuration for the Physion-Labs installable fork.
+#
+# NOTE: setup.py imports torch to build the two CUDA extensions, so install
+# WITHOUT build isolation, in an env that already has torch + CUDA toolkit:
+#
+#   pip install --no-build-isolation \
+#     "trans-detr @ git+https://github.com/Physion-Labs/TransDETR.git@<commit>"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
