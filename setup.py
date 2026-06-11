@@ -82,10 +82,18 @@ setup(
         exclude=["*build*", "*egg-info*"],
     ),
     python_requires=">=3.9",
-    # Runtime deps are intentionally NOT declared: this research codebase is
-    # consumed inside environments that own their torch/vision versions, and a
+    # Inference-path runtime deps (empirically determined — the import chain of
+    # models/datasets/util pulls these at module import). torch/torchvision are
+    # deliberately NOT declared: environments own their torch builds, and a
     # resolver-driven torch reinstall is never wanted here.
-    install_requires=[],
+    install_requires=[
+        "numpy",
+        "opencv-python",
+        "Pillow",
+        "shapely",
+        "pyclipper",
+        "Polygon3",   # `import Polygon` in datasets/data_tools.py (GPL upstream dep)
+    ],
     ext_modules=get_ext_modules(),
     cmdclass=get_cmdclass(),
 )
