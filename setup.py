@@ -27,14 +27,18 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
 def _cuda_extension(name: str, ext_root: str):
-    import torch
     from torch.utils.cpp_extension import CUDA_HOME, CUDAExtension
 
-    if not (torch.cuda.is_available() and CUDA_HOME is not None):
+    # Build only needs nvcc + CUDA headers (CUDA_HOME). It does NOT need a
+    # GPU to be visible at install time — nvcc cross-compiles for the arches
+    # listed in TORCH_CUDA_ARCH_LIST (or torch's defaults). Requiring a GPU
+    # here blocks containerized CI builds for no real reason; the loadable
+    # check happens naturally when the .so is imported at runtime.
+    if CUDA_HOME is None:
         raise NotImplementedError(
-            f"CUDA is required to build {name} (torch.cuda.is_available()="
-            f"{torch.cuda.is_available()}, CUDA_HOME={CUDA_HOME!r}). "
-            "Install on a GPU machine with the CUDA toolkit present."
+            f"CUDA toolkit required to build {name} (CUDA_HOME is None). "
+            "Install on a machine with nvcc + CUDA headers present. "
+            "A GPU at install time is NOT required."
         )
 
     src = os.path.join(ROOT, ext_root, "src")
